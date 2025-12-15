@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test</title>
+  <style>
+    form {
+      background-color: rgb(209, 209, 209);
+      padding: 10px;
+      margin-top: 20px;
+    }
+
+    button {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2><span id="counter"></span></h2>
+
+  <label>
+    Enter name:
+    <input type="text" id="username">
+  </label>
+
+  <form id="testForm">
+    <p id="questions"></p>
+    <div id="answers"></div>
+  </form>
+
+  <button type="button" id="nextBtn">Ответить</button>
+  <p id="timer"></p>
+
+  <script>
+    const questions = [
+      {
+        text: 'Для чего можно использовать JavaScript?',
+        answers: [
+          'Для создания самостоятельной исполняемой программы',
+          'Для обработки событий на web-странице',
+          'Для добавления динамики и интилекта в web-страницу',
+          'все варианты верны'
+        ],
+        correct: 3
+      },
+      {
+        text: 'Что возвращает выражение 2+"2"',
+        answers: [
+          '4',
+          '"22"',
+          'NaN',
+          'Ошибка'
+        ],
+        correct: 1
+      },
+      {
+        text: 'Как обьявить функцию?',
+        answers: [
+          'function myFunc(){}',
+          'func myFunc(){}',
+          'def myFunc(){}',
+          'function:myFunc(){}'
+        ],
+        correct: 0
+      },
+      {
+        text: 'Что такое переменная в ДжаваСкрипт',
+        answers: [
+          'Ячейка памяти для хранения данных',
+          'Функция, которая выполняет код',
+          'Событие на веб-странице',
+          'HTML-тег'
+        ],
+        correct: 0
+      },
+      {
+        text: 'Что делает метод .push() для массива?',
+        answers: [
+          'Удаляет первый элемент массива',
+          'Добавляет элемент в конец массива',
+          'Создает новый массив',
+          'Сортирует массив'
+        ],
+        correct: 1
+      },
+      {
+        text: 'Какая из конструкций является условным оператором?',
+        answers: [
+          'for',
+          'while',
+          'if',
+          'switch()'
+        ],
+        correct: 2
+      },
+      {
+        text: 'Что делает метод .toUpperCase() для строки?',
+        answers: [
+          'Преобразует строку в верхний регистр',
+          'Преобразует строку в нижний регистр',
+          'Обрезает пробелы в строке',
+          'Разбивает строку на массив'
+        ],
+        correct: 0
+      },
+      {
+        text: 'Как добавить элемент в начало массива?',
+        answers: [
+          '.push()',
+          '.unshift()',
+          '.shift()',
+          '.pop()'
+        ],
+        correct: 1
+      },
+      {
+        text: 'Какая команда выводит сообщения в консоль?',
+        answers: [
+          'alert()',
+          'console.log()',
+          'document.write()',
+          'prompt()'
+        ],
+        correct: 1
+      }
+    ]
+    const questionEl = document.getElementById('questions')
+    const answerEl = document.getElementById('answers')
+    const counterEl = document.getElementById('counter')
+    const btn = document.getElementById('nextBtn')
+    const timerEl = document.getElementById('timer')
+
+    let currentQuestion = 0
+    let score = 0
+    let timePerQuestion = 10
+    let timerId
+
+    function startTimer() {
+      let timeLeft = timePerQuestion
+      timerEl.textContent = `Осталось времени: ${timeLeft} сек`
+
+      timerId = setInterval(() => {
+        timeLeft--
+        timerEl.textContent = `Осталось времени: ${timeLeft} сек`
+
+        if (timeLeft <= 0) {
+          clearInterval(timerId)
+          currentQuestion++
+          currentQuestion < questions.length ? showQuestion() : finishTest()
+        }
+      }, 1000)
+    }
+    showQuestion()
+    btn.addEventListener("click", nextQuestion)
+    function showQuestion() {
+      const q = questions[currentQuestion]
+      counterEl.textContent = `Вопрос ${currentQuestion + 1} из ${questions.length}`
+      questionEl.textContent = q.text
+      answerEl.innerHTML = ''
+      q.answers.forEach((answers, index) => {
+        answerEl.innerHTML += `
+        <label>
+          <input type="radio" name="answer" value="${index}">
+           ${answers}
+        </label><br>`
+      });
+      clearInterval(timerId)
+      startTimer()
+    }
+    function nextQuestion() {
+      const selected = document.querySelector('input[name="answer"]:checked')
+      if (!selected) {
+        alert("Choose")
+        return
+      }
+      if (Number(selected.value) === questions[currentQuestion].correct) {
+        score++
+      }
+      currentQuestion++
+      if (currentQuestion < questions.length) {
+        showQuestion()
+      } else {
+        finishTest()
+      }
+    }
+    function finishTest() {
+      const name = document.getElementById("username").value || "User"
+      alert(`Поздровляем, ${name}! Тест сдан на ${score}`)
+      clearInterval(timerId)
+    }
+  </script>
+</body>
+
+</html>
